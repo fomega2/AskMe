@@ -56,7 +56,7 @@ const AskQuestiong = () => {
   }
 
   return (
-    <div className="mt-5 d-flex aligns-items-center justify-content-center card border-0 text-center container position-absolute top-50 start-50 translate-middle">
+    <div className="mt-3 d-flex aligns-items-center justify-content-center card border-0 text-center container position-absolute top-50 start-50 translate-middle">
       {
         !loading ?
           <form onSubmit={handleSubmit}>
@@ -70,7 +70,7 @@ const AskQuestiong = () => {
                 <div className="row">
                   <div className="col-12">
                     <textarea
-                      rows={10}
+                      rows={8}
                       value={question}
                       onChange={(e) => setQuestion(e.target.value)}
                       name="question"

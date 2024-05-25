@@ -1,13 +1,15 @@
-import { off, onValue, ref } from 'firebase/database';
+import { off, onValue, ref, remove } from 'firebase/database';
 import { useEffect, useState } from 'react';
 import ReactPaginate from 'react-paginate';
 import { database } from '../dataBaseConection';
 import { IMessageInfo } from './iMessageInfo';
 import ViewMessagesList from './viewMessagesList';
+import { ToastContainer, toast } from 'react-toastify';
+import '../../src/index.css'
 
 const ViewMessages = () => {
     const [questions, setQuestions] = useState<IMessageInfo[]>([]);
-    const [itemsPerPage, setItemsPerPage] = useState<number>(1);    
+    const [itemsPerPage, setItemsPerPage] = useState<number>(1);
     const [itemOffset, setItemOffset] = useState(0);
     const [currentItems, setCurrentItems] = useState<IMessageInfo[]>([]);
 
@@ -38,37 +40,57 @@ const ViewMessages = () => {
 
     const handlePageClick = (event: { selected: number; }) => {
         const newOffset = (event.selected * itemsPerPage) % questions.length;
-        setItemOffset(newOffset);        
+        setItemOffset(newOffset);
     };
 
+    const deleteAll = () => {
+        const questionsRef = ref(database, 'questions');
+
+        // Eliminar todos los elementos en 'questions'
+        remove(questionsRef)
+            .then(() => {
+                toast.success("Todos los mensajes han sido eliminados");
+            })
+            .catch((error) => {
+                toast.error("Error al eliminar los elementos");
+                console.error("Error al eliminar los elementos: ", error);
+            });
+    }
+
     return (
-        <div className="mt-5 d-flex aligns-items-center justify-content-center card border-0 text-center container position-absolute top-50 start-50 translate-middle">
-            <div className='row justify-content-between mb-5'>
-                <div className='col-md-3 mt-2 col-sm-auto'>
-                    <label className='fw-bold' htmlFor="itemsPerPage">Seleccione las preguntas por página</label>
-                    <select id='itemsPerPage' name='itemsPerPage' className='form-control form-control-lg' onChange={(e) => setItemsPerPage(Number(e.target.value))} value={itemsPerPage}>
-                        <option value={1}>1</option>
-                        <option value={5}>5</option>
-                        <option value={10}>10</option>
-                    </select>
+        <div className='container' style={{ marginTop: "10%" }}>
+            <div className="mt-5 d-flex aligns-items-center justify-content-center card border-0 text-center">
+                <div className='row justify-content-between'>
+                    <div className='col-md-3 mt-2 col-sm-auto'>
+                        <label className='fw-bold' htmlFor="itemsPerPage">Seleccione las preguntas por página</label>
+                        <select id='itemsPerPage' name='itemsPerPage' className='form-control form-control-lg' onChange={(e) => setItemsPerPage(Number(e.target.value))} value={itemsPerPage}>
+                            <option value={1}>1</option>
+                            <option value={5}>5</option>
+                            <option value={10}>10</option>
+                        </select>
+                    </div>
+                    <div className='col-md-3 mt-2 col-sm-auto'>
+                        <button type='button' onClick={deleteAll} className='btn btn-success mt-2' >Eliminar todos</button>
+                    </div>
+                    <div className='col-md-3 mt-2 col-sm-auto'>
+                        <span className='fw-bold d-block'>Preguntas totales:</span>
+                        <span className='h2 text-success'>{questions.length}</span>
+                    </div>
                 </div>
-                <div className='col-md-3 mt-2 col-sm-auto'>
-                    <span className='fw-bold d-block'>Preguntas totales:</span>
-                    <span className='h2 text-success'>{questions.length}</span>
+                <ViewMessagesList items={currentItems} itemsPerPage={itemsPerPage} />
+                <div style={{ marginTop: "15%" }}>
+                    <ReactPaginate
+                        breakLabel="..."
+                        nextLabel="next >"
+                        onPageChange={handlePageClick}
+                        pageRangeDisplayed={5}
+                        pageCount={pageCount}
+                        previousLabel="< previous"
+                        renderOnZeroPageCount={null}
+                    />
                 </div>
             </div>
-            <ViewMessagesList items={currentItems} itemsPerPage={itemsPerPage} />
-            <div className='mt-5'>
-                <ReactPaginate
-                    breakLabel="..."
-                    nextLabel="next >"
-                    onPageChange={handlePageClick}
-                    pageRangeDisplayed={5}
-                    pageCount={pageCount}
-                    previousLabel="< previous"
-                    renderOnZeroPageCount={null}
-                />
-            </div>
+            <ToastContainer />
         </div>
     );
 };
