@@ -26,6 +26,21 @@ const AskQuestiong = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
+
+    if(question === "soyElAdmin"){
+      sessionStorage.clear()
+      toast.warning("Conteo reiniciado");
+      return;
+    }
+
+    const successQuestions = sessionStorage.getItem("successQuestions");
+    if(successQuestions && Number(successQuestions) > 3){
+      toast.warning("Tiene un máximo de tres preguntas");
+      setQuestion("");
+      return;
+    }
+
+    e.preventDefault();
     if (question.trim().length === 0) {
       toast.warning("No puede hacer un pregunta en blanco");
       return;
@@ -49,10 +64,23 @@ const AskQuestiong = () => {
       await addQuestion(personName, question);
       setQuestion("");
       toast.success("Pregunta enviada exitosamente");
+      
+      saveSuccessQuestionAtempsInSession();      
+
     } catch (error) {
       toast.error("Ocurrió un error al enviar la pregunta");
       console.error("Error al enviar la pregunta:", error);
     }
+  }
+
+  const saveSuccessQuestionAtempsInSession = () =>{
+    const successQuestions = sessionStorage.getItem("successQuestions");
+      if(!successQuestions){
+        sessionStorage.setItem("successQuestions", "1")
+      }else{
+        const acuSuccess = Number(successQuestions) + 1
+        sessionStorage.setItem("successQuestions", acuSuccess.toString())
+      }
   }
 
   return (
@@ -75,6 +103,7 @@ const AskQuestiong = () => {
                       onChange={(e) => setQuestion(e.target.value)}
                       name="question"
                       id="question"
+                      maxLength={400}
                       className="form-control form-control-lg d-block" placeholder="Escribe la pregunta en este cuadro de texto"></textarea>
                   </div>
                 </div>

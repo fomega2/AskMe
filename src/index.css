@@ -14,6 +14,7 @@ a:hover {
     cursor: pointer;
 }
 
+/* Default styles */
 li {
     color: white;
     list-style: none;
@@ -22,8 +23,23 @@ li {
 
 ul {    
     border-radius: 0.5rem;
-    background-color: #198754;
-    padding: 1.1rem;
+    background-color: rgb(25, 135, 84);    
+    padding: 1.5rem;
     display: flex;
     justify-content: space-between;
 }
+
+/* Responsive styles for small laptops */
+@media (max-width: 1024px) {
+    ul {
+        flex-direction: column;
+        padding: 0.8rem;
+    }
+
+    li {
+        margin-bottom: 0.5rem;
+        text-align: center;
+    }
+}
+
+

@@ -13,7 +13,7 @@ const ViewMessagesList: React.FC<ViewMessagesListProps> = ({ items, itemsPerPage
         <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
           {items.map((item, index) => (
             <div key={index}>
-              <p className='text-center my-5' style={{ fontSize: '2.5rem' }}>{item.question}</p>
+              <p className='text-center my-5' style={{ fontSize: '2rem' }}>{item.question}</p>
             </div>
           ))}
         </div>
